@@ -19,6 +19,7 @@ type accessLog struct {
     elapsedTime                         time.Duration
 }
 
+// LogAccess is used to log HTTP requests made to a golang web server, record information about the request, then allow it to continue.
 func LogAccess(w http.ResponseWriter, req *http.Request, duration time.Duration) {
     clientIP := req.RemoteAddr
 
@@ -38,8 +39,8 @@ func LogAccess(w http.ResponseWriter, req *http.Request, duration time.Duration)
     writeAccessLog(record)
 }
 
-func writeAccessLog(record *accessLog) {
-    logRecord := ""+record.ip+" "+record.protocol+" "+record.method+": "+record.uri+", host: "+record.host+" (load time: "+strconv.FormatFloat(record.elapsedTime.Seconds(), 'f', 5, 64)+" seconds)"
+func writeAccessLog(r *accessLog) {
+    logRecord := fmt.Sprintf("%s %s %s %s: %s host: %s (load time: %d seconds)", r.ip, r.protocol, r.method, r.uri, r.host, strconv.FormatFloat(r.elapsedTime.Seconds(), 'f', 5, 64))
     glog.Infoln(logRecord)
     glog.Flush()
 }
